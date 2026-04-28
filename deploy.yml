@@ -1,0 +1,35 @@
+- hosts: server
+  tasks:
+
+    - name: Backup old app
+      command: cp -r /home/ubuntu/app /home/ubuntu/app_backup || true
+
+    - name: Remove old app
+      file:
+        path: /home/ubuntu/app
+        state: absent
+
+    - name: Create app directory
+      file:
+        path: /home/ubuntu/app
+        state: directory
+
+    - name: Copy Backend
+      copy:
+        src: Backend/
+        dest: /home/ubuntu/app/backend/
+
+    - name: Install backend dependencies
+      command: npm install
+      args:
+        chdir: /home/ubuntu/app/backend/
+
+    - name: Start backend
+      command: pm2 restart all || pm2 start server.js --name backend
+      args:
+        chdir: /home/ubuntu/app/backend/
+
+    - name: Copy frontend build
+      copy:
+        src: Frontend/dist/
+        dest: /var/www/html/
