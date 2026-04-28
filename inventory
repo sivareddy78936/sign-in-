@@ -1,0 +1,2 @@
+[server]
+YOUR_EC2_IP ansible_user=ubuntu
